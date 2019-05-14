@@ -20,3 +20,7 @@ The Fast Fourier Transform (FFT) was prepared by my project coordinator - Krzysz
 # Authors:
 1. Adrian Tomicki - main developer, friendly beginner, responsible for this mess of a code.
 2. Krzysztof Łyszczek - project coordinator and manager, provided Fast Fourier Transform and theoretical knowledge of physics and optics.
+
+# To do:
+1. Fully translate the code into English, with file names as well.
+2. Update the graphical design of the UI.
