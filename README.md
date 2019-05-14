@@ -15,4 +15,8 @@ Staying on the topic of images - the program generates 4 images:
 
 This was my school project for a contest, called "Olympics of Technical Innovation 2019". Of course the title is translated from Polish. I took the 2nd place in my region and didn't make it to the next stage, sadly. But for a beginner programmer it's a huge success that someone appreciated my efforts and wanted to work with me.
 
-The Fast Fourier Transformation (FFT) was prepared by my project coordinator - Krzysztof Łyszczek, who gave the idea and was the inspiration for all this mess. I have his permission to upload it here and I am really grateful for all the hard work he did to teach me some stuff about physics and how optics work.
+The Fast Fourier Transform (FFT) was prepared by my project coordinator - Krzysztof Łyszczek, who gave the idea and was the inspiration for all this mess. I have his permission to upload it here and I am really grateful for all the hard work he did to teach me some stuff about physics and how optics work.
+
+# Authors:
+1. Adrian Tomicki - main developer, friendly beginner, responsible for this mess of a code.
+2. Krzysztof Łyszczek - project coordinator and manager, provided Fast Fourier Transform and theoretical knowledge of physics and optics.
