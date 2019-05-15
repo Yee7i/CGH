@@ -1,5 +1,5 @@
-#include "Header.h"
 #include <iostream>
+#include <complex>
 
 using namespace std;
 
@@ -7,7 +7,7 @@ const int N = 64;
 const int p = 6;
 const int N1 = N / 2;
 
-void ft(double sign, complex<double> tab_SQ[N][N])
+void ft(double sign, std::complex<double> tab_SQ[N][N])
 {
 	const double M_PI = 3.14159265358979323846;
 
@@ -17,7 +17,7 @@ void ft(double sign, complex<double> tab_SQ[N][N])
 	int tab_index[N] = { 0 };
 
 	int l1 = 0;
-	int l2 = M / 2;
+	int l2 = N / 2;
 	int l3 = l2 / 2;
 	int l4 = l2 + l3;
 
@@ -34,18 +34,18 @@ void ft(double sign, complex<double> tab_SQ[N][N])
 		{
 			if (f1 == true)
 			{
-				l1 += M / 8;
-				l2 += M / 8;
-				l3 += M / 8;
-				l4 += M / 8;
+				l1 += N / 8;
+				l2 += N / 8;
+				l3 += N / 8;
+				l4 += N / 8;
 				f1 = false;
 			}
 			else
 			{
-				l1 -= M / 16;
-				l2 -= M / 16;
-				l3 -= M / 16;
-				l4 -= M / 16;
+				l1 -= N / 16;
+				l2 -= N / 16;
+				l3 -= N / 16;
+				l4 -= N / 16;
 				f1 = true;
 			}
 		}
@@ -70,7 +70,7 @@ void ft(double sign, complex<double> tab_SQ[N][N])
 		tab_index[i] = tab_bb[i];
 	}
 
-	for (int i = N / 2; i < M; i++)
+	for (int i = N / 2; i < N; i++)
 	{
 		tab_index[i] = tab_bb[petla1] + 1;
 

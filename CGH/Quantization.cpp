@@ -1,7 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string>
-#include "Header.h"
 
 using namespace std;
 

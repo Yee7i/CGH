@@ -2,9 +2,8 @@
 #include <math.h>
 #include <complex>
 
-#include "Header.h"
-
 const int N = 64;
+using namespace std;
 
 double error_psi(double tab_Ampl[N][N], double tab_Ampl_obiekt[N][N])
 {

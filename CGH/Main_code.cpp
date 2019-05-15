@@ -1,48 +1,3 @@
-/*
-	"KOMPUTEROWA GENERACJA OBRAZÓW HOLOGRAFICZNYCH W OPARCIU O SZYBK¥ TRANSFORMACJÊ FOURIERA"
-
-	Program, u¿ywaj¹cy szybkiej transformacji Fouriera, aby tworzyæ obrazy holograficzne z obiektów binarnych.
-
-	Stworzony przez:
-		- Krzysztofa £yszczek  — nauczyciela Zespo³u Szkó³ Elektryczno-Elektronicznych w Szczecinie, odpowiedzialnego za przygotowanie teoretyczne, szybk¹ transformacjê Fouriera, funkcje PSI i SNR,
-		- Adriana Tomickiego   — klasa 3Tg Zespo³u Szkó³ Elektryczno-Elektronicznych w Szczecinie, odpowiedzialnego za oprogramowanie, interfejsy i zaplecze informatyczne,
-	na potrzeby Olimpiady Innowacji Technicznych 2019.
-
-	Wejœcie do programu musi sk³adaæ siê z wybranego przez u¿ytkownika pliku .txt, zawieraj¹cego 64 wiersze i 64 kolumny cyfr z zakresu {0, 1}.
-	
-	U¿ytkownik nastêpnie definiuje opcjonalne funkcje:
-		- generacjê siatki do obserwacji,
-		- kwantowanie i stopieñ kwantowania,
-		- kolor tekstur wyjœciowych (bia³y lub czarny, opcja "bia³y" w celach konserwacji tuszu przy drukowaniu, tym samym dbaj¹c o œrodowisko — opcja "czarny" jest poprawna teoretycznie),
-		- usuwanie fragmentów widma w celach testowych.
-	
-	Program tworzy odpowiednie foldery, pliki wyjœciowe z danymi (foldery — input, obraz, widmo) i trzy obrazy w formacie .png:
-		- obiekt.png		 — zawiera informacje zaczerpniête z pliku wejœciowego, przekonwertowane na obraz graficzny w celach pogl¹dowych.
-		- widmo.png			 — zawiera informacje o widmie obiektu w postaci nieuwzglêdniaj¹cej fazy i szerokoœci szczeliny. Widmo jest tworzone przy u¿yciu szybkiej transformacji Fouriera na obiekcie.
-		- obraz.png			 — zawiera informacje o obrazie, generowanym z widma przy pomocy szybkiej transformacji Fouriera.
-		- widmo_hologram.png — zawiera obraz, bêd¹cy przekszta³ceniem obiektu, mo¿liwym do wyœwietlenia jako hologram. Uwzglêdnia szerokoœæ szczeliny.
-	Wszystkie pliki s¹ tworzone w katalogu g³ównym programu, w folderze "output".
-
-	Do dzia³ania programu konieczne jest posiadanie odpowiednich bibliotek i wszystkich plików programu, z czcionkami w³¹cznie, a tak¿e systemu operacyjnego Windows.
-
-	Spis plików Ÿród³owych:
-		- Glowny_kod.cpp  — zawiera g³ówny kod programu. Jest to najd³u¿szy i zarazem najwa¿niejszy plik w projekcie. Obs³uguje przetwarzanie œcie¿ek, wyjœcia do plików, tryb graficzny, wywo³ywanie funkcji i pozosta³e operacje.
-		- Header.h        — zawarte s¹ tutaj deklaracje funkcji, u¿ytych w programie.
-		- Fourier.cpp     — zawiera szybk¹ transformacjê Fouriera, przekszta³caj¹c¹ obiekt w widmo, a nastêpnie w obraz.
-		- Kwantowanie.cpp — obs³uguje funkcje kwantowania amplitudy i kwantowania fazy.
-		- PSI_SNR.cpp     — generuje wspó³czynnik dok³adnoœci odwzorowania obrazu (PSI), oraz stosunek sygna³u do szumu (SNR).
-
-	Obrazy generowane przez program s¹ podpisane. W lewym dolnym rogu obrazu znajduj¹ siê informacje:
-		- dla obiektu			 — "Obiekt",
-		- dla widma i hologramu  — "Widmo - kwantowanie X, maksymalne natê¿enie - Y, ca³kowite natê¿enie - Z", gdzie X oznacza stopieñ kwantowania, podany przez u¿ytkownika, Y oznacza maksymalne natê¿enie jasnoœci punktu, Z oznacza ca³kowite natê¿enie jasnoœci wszystkich punktów,
-		- dla obrazu			 — "Obraz - kwantowanie X, PSI - Y, SNR - Z", gdzie X oznacza stopieñ kwantowania, podany przez u¿ytkownika; Y oznacza wspó³czynnik odwzorowania obrazu, z dok³adnoœci¹ do 6 miejsc po przecinku (im mniejszy, tym obraz jest dok³adniejszy); Z oznacza stosunek sygna³u do szumu, zapisany w notacji wyk³adniczej (im wiêkszy, tym obraz jest dok³adniejszy).
-
-	Program zosta³ napisany i przetworzony przy u¿yciu Microsoft Visual Studio 2017 Community.
-
-	Do oprogramowania grafiki u¿yto bibliotek SFML (Simple and Fast Multimedia Library), stworzonych przez SFML Team. Link do repozytorium — https://www.github.com/SFML/SFML. Link do strony internetowej — https://www.sfml-dev.org/.
-
-*/
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Main.hpp>
@@ -64,12 +19,18 @@
 #include <iomanip>
 #include <complex>
 
-#include "Header.h"
-
 const int N = 64;
 const int p = 6;
 
-string otworz()
+void ft(double sign, std::complex<double> tab_SQ[N][N]);
+void kwant_a(double input[N][N], int kwant);
+void kwant_f(double input[N][N], int kwant);
+std::string stopien_kwant(int kwant);
+
+double error_psi(double tab_Ampl[N][N], double tab_Ampl_obiekt[N][N]);
+double SNR(double tab_Ampl_obiekt[N][N], double tab_Ampl[N][N], double tab_Faza_obiekt[N][N], double tab_Faza[N][N]);
+
+std::string otworz()
 {
 	char filename[MAX_PATH];
 
@@ -86,7 +47,7 @@ string otworz()
 
 	if (GetOpenFileNameA(&ofn))
 	{
-		cout << "Sciezka do pliku: " << filename << "\n";
+		std::cout << "Sciezka do pliku: " << filename << "\n";
 	}
 	else
 	{
@@ -118,7 +79,7 @@ bool click(Sprite check, RenderWindow& window)
 int main()
 {
 
-	string sciezka_input = "";
+	std::string sciezka_input = "";
 
 	///// Inicjalizacja trybu graficznego do wyboru parametrów programu /////
 
@@ -134,7 +95,7 @@ int main()
 	bool kolor_b = false;
 	bool flaga_wprowadzanie = false;
 
-	string kwant_val = "";
+	std::string kwant_val = "";
 
 	Font font1;
 	if (!font1.loadFromFile("gothic.ttf"))
@@ -575,23 +536,23 @@ int main()
 	char* path;
 	_get_pgmptr(&path);
 
-	string curr_path = path;
+	std::string curr_path = path;
 
-	string in_line = "";
+	std::string in_line = "";
 
-	string line;
-	string bef;
-	string stringchar;
-	string nazwa_ampl_wejscie;
-	string nazwa_faza_wejscie;
+	std::string line;
+	std::string bef;
+	std::string stringchar;
+	std::string nazwa_ampl_wejscie;
+	std::string nazwa_faza_wejscie;
 
-	string nazwa_docelowa_faza;
-	string nazwa_docelowa_ampl;
+	std::string nazwa_docelowa_faza;
+	std::string nazwa_docelowa_ampl;
 
-	string nazwa_docelowa_fold;
-	string nazwa_docelowa_fold_obiekt;
-	string nazwa_docelowa_fold_widmo;
-	string nazwa_docelowa_fold_input;
+	std::string nazwa_docelowa_fold;
+	std::string nazwa_docelowa_fold_obiekt;
+	std::string nazwa_docelowa_fold_widmo;
+	std::string nazwa_docelowa_fold_input;
 
 	///// Deklaracja œcie¿ek, u¿ywanych w programie /////
 
@@ -653,7 +614,7 @@ int main()
 
 	cout << "Kopiowanie pliku wejsciowego... ";
 
-	string nazwa_docelowa_input = nazwa_docelowa_fold + "\\input\\input.txt";
+	std::string nazwa_docelowa_input = nazwa_docelowa_fold + "\\input\\input.txt";
 
 	CopyFile(sciezka_input.c_str(), nazwa_docelowa_input.c_str(), false);
 
@@ -780,7 +741,7 @@ int main()
 
 	///// Zapis danych widma /////
 
-	string sciezka_out_SQ_1 = curr_path + "\\output\\widmo\\tab_SQ_widmo.txt";
+	std::string sciezka_out_SQ_1 = curr_path + "\\output\\widmo\\tab_SQ_widmo.txt";
 	ofstream zap1(sciezka_out_SQ_1.c_str(), ios::out | ios::trunc);
 
 	for (int i = 0; i < N; i++)
@@ -798,7 +759,7 @@ int main()
 
 	zap1.close();
 
-	string sciezka_out_AM_2 = curr_path + "\\output\\widmo\\tab_AM_widmo.txt";
+	std::string sciezka_out_AM_2 = curr_path + "\\output\\widmo\\tab_AM_widmo.txt";
 	ofstream zap2(sciezka_out_AM_2.c_str(), ios::out | ios::trunc);
 
 	for (int i = 0; i < N; i++)
@@ -816,7 +777,7 @@ int main()
 
 	zap2.close();
 
-	string sciezka_out_FA_2 = curr_path + "\\output\\widmo\\tab_FA_widmo.txt";
+	std::string sciezka_out_FA_2 = curr_path + "\\output\\widmo\\tab_FA_widmo.txt";
 	ofstream zap3(sciezka_out_FA_2.c_str(), ios::trunc | ios::out);
 
 	for (int i = 0; i < N; i++)
@@ -862,8 +823,8 @@ int main()
 	snr_sstream << scientific << snr;
 	psi_sstream << setprecision(6) << fixed << psi;
 
-	string snr_str;
-	string psi_str;
+	std::string snr_str;
+	std::string psi_str;
 
 	snr_sstream >> snr_str;
 	psi_sstream >> psi_str;
@@ -991,9 +952,9 @@ int main()
 		}
 	}
 
-	string text_obraz_comb = "Obraz - kwantowanie " + stopien_kwant(kwant_stopien) + ", PSI - " + psi_str + ", SNR - " + snr_str + ".";
-	string text_widmo_comb = "Widmo - kwantowanie " + stopien_kwant(kwant_stopien) + ", maksymalne natezenie - " + to_string(max_amp) + ", calkowite natezenie - " + to_string(calk_amp) + ".";
-	string text_holo_comb = "Hologram - kwantowanie " + stopien_kwant(kwant_stopien) + ", maksymalne natezenie - " + to_string(max_amp) + ", calkowite natezenie - " + to_string(calk_amp) + ".";
+	std::string text_obraz_comb = "Obraz - kwantowanie " + stopien_kwant(kwant_stopien) + ", PSI - " + psi_str + ", SNR - " + snr_str + ".";
+	std::string text_widmo_comb = "Widmo - kwantowanie " + stopien_kwant(kwant_stopien) + ", maksymalne natezenie - " + to_string(max_amp) + ", calkowite natezenie - " + to_string(calk_amp) + ".";
+	std::string text_holo_comb = "Hologram - kwantowanie " + stopien_kwant(kwant_stopien) + ", maksymalne natezenie - " + to_string(max_amp) + ", calkowite natezenie - " + to_string(calk_amp) + ".";
 
 	text_obiekt.setString("Obiekt");
 	text_obraz.setString(text_obraz_comb);
@@ -1177,10 +1138,10 @@ int main()
 			texture3.display();
 			texture4.display();
 
-			string sciezka = curr_path + "\\output\\widmo.png";
-			string sciezka2 = curr_path + "\\output\\obraz.png";
-			string sciezka3 = curr_path + "\\output\\obiekt.png";
-			string sciezka4 = curr_path + "\\output\\widmo_hologram.png";
+			std::string sciezka = curr_path + "\\output\\widmo.png";
+			std::string sciezka2 = curr_path + "\\output\\obraz.png";
+			std::string sciezka3 = curr_path + "\\output\\obiekt.png";
+			std::string sciezka4 = curr_path + "\\output\\widmo_hologram.png";
 
 			cout << endl << "Zapisywanie tekstur: " << endl;
 
@@ -1196,7 +1157,7 @@ int main()
 
 		//////////  Zapis danych do plików  ///////////
 
-			string sciezka_out_SQ = curr_path + "\\output\\obraz\\tab_SQ_obraz.txt";
+			std::string sciezka_out_SQ = curr_path + "\\output\\obraz\\tab_SQ_obraz.txt";
 			ofstream zap1_1(sciezka_out_SQ.c_str(), ios::out | ios::trunc);
 
 			for (int i = 0; i < N; i++)
@@ -1214,7 +1175,7 @@ int main()
 
 			zap1_1.close();
 
-			string sciezka_out_AM = curr_path + "\\output\\obraz\\tab_AM_obraz.txt";
+			std::string sciezka_out_AM = curr_path + "\\output\\obraz\\tab_AM_obraz.txt";
 			ofstream zap2_1(sciezka_out_AM.c_str(), ios::out | ios::trunc);
 
 			for (int i = 0; i < N; i++)
@@ -1232,7 +1193,7 @@ int main()
 
 			zap2_1.close();
 
-			string sciezka_out_FA = curr_path + "\\output\\obraz\\tab_FA_obraz.txt";
+			std::string sciezka_out_FA = curr_path + "\\output\\obraz\\tab_FA_obraz.txt";
 			ofstream zap3_1(sciezka_out_FA.c_str(), ios::trunc | ios::out);
 			
 			for (int i = 0; i < N; i++)

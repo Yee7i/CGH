@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.329
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Prostokat_v3", "Prostokat_v3\Prostokat_v3.vcxproj", "{650FF00D-34CA-4162-BE9E-6330252C027E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Prostokat_v3", "CGH\CGH.vcxproj", "{650FF00D-34CA-4162-BE9E-6330252C027E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

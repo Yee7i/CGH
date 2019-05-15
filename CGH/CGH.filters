@@ -15,22 +15,17 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Kwantowanie.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Fourier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PSI_SNR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Glowny_kod.cpp">
+    <ClCompile Include="Quantization.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Header.H">
+    <ClCompile Include="Main_code.cpp">
       <Filter>Source Files</Filter>
-    </ClInclude>
+    </ClCompile>
   </ItemGroup>
 </Project>
