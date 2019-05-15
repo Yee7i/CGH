@@ -1,4 +1,4 @@
-# CGH
+# CGH - Computer-Generated Holography
 What this program aims to do is to generate a hologram based on a binary 64x64 object, saved in a text file.
 The program consists of a basic graphical UI, in which user can select options he wants and set the properties of generated images, like color and whether or not to generate a chart.
 
