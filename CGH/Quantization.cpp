@@ -6,16 +6,16 @@ using namespace std;
 
 const int N = 64;
 
-int kwant = 0;
+int quant = 0;
 
 const double M_PI = 3.14159265358979323846;
 
-string stopien_kwant(int kwant)
+string level_quant(int quant)
 {
-	return to_string(kwant);
+	return to_string(quant);
 }
 
-void kwant_a(double input[N][N], int kwant) 
+void quant_a(double input[N][N], int quant) 
 {
 	double max = 0;
 
@@ -30,14 +30,14 @@ void kwant_a(double input[N][N], int kwant)
 		}
 	}
 
-	double step = max / kwant;
+	double step = max / quant;
 	double step_real = 0;
 
 	for (int i = 0; i < N; i++)
 	{
 		for (int j = 0; j < N; j++)
 		{
-			for (int k = 0; k < kwant; k++)
+			for (int k = 0; k < quant; k++)
 			{
 
 				step_real = step * k;
@@ -57,7 +57,7 @@ void kwant_a(double input[N][N], int kwant)
 	}
 }
 
-void kwant_f(double input[N][N], int kwant) 
+void quant_p(double input[N][N], int quant) 
 {
 
 	double max = -10;
@@ -73,7 +73,7 @@ void kwant_f(double input[N][N], int kwant)
 		}
 	}
 
-	double step = max / kwant;
+	double step = max / quant;
 	double step_real = 0;
 	bool neg = false;
 
@@ -88,7 +88,7 @@ void kwant_f(double input[N][N], int kwant)
 				neg = true;
 			}
 
-			for (int k = 0; k < kwant; k++)
+			for (int k = 0; k < quant; k++)
 			{
 
 				step_real = step * k;

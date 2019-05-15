@@ -11,7 +11,7 @@ void ft(double sign, std::complex<double> tab_SQ[N][N])
 {
 	const double M_PI = 3.14159265358979323846;
 
-	std::complex<double> jUrojona(0.0, 1.0);
+	std::complex<double> numImaginary(0.0, 1.0);
 
 	int tab_bb[N / 2] = { 0 };
 	int tab_index[N] = { 0 };
@@ -52,18 +52,18 @@ void ft(double sign, std::complex<double> tab_SQ[N][N])
 
 		else
 		{
-			int petla2 = 0;
+			int loop2 = 0;
 
 			for (int j = i; j < N1; j++)
 			{
-				tab_bb[j] = tab_bb[petla2] + 2;
-				petla2++;
+				tab_bb[j] = tab_bb[loop2] + 2;
+				loop2++;
 				i++;
 			}
 		}
 	}
 
-	int petla1 = 0;
+	int loop1 = 0;
 
 	for (int i = 0; i < N1; i++)
 	{
@@ -72,9 +72,9 @@ void ft(double sign, std::complex<double> tab_SQ[N][N])
 
 	for (int i = N / 2; i < N; i++)
 	{
-		tab_index[i] = tab_bb[petla1] + 1;
+		tab_index[i] = tab_bb[loop1] + 1;
 
-		petla1++;
+		loop1++;
 	}
 
 	int j;
@@ -102,7 +102,7 @@ void ft(double sign, std::complex<double> tab_SQ[N][N])
 	int b, b_, a, a_;
 	int bb;
 	int rr, rr_, pp, pp_, qq, qq_, ss, ss_;
-	int czyn1, czyn2;
+	int fac1, fac2;
 
 	std::complex<double> tab_SP[N][N];
 	std::complex<double> tab_u1[2][N / 2];
@@ -122,7 +122,7 @@ void ft(double sign, std::complex<double> tab_SQ[N][N])
 			for (k = 0; k <= 1; ++k)
 			{
 				kk = k - N / 2;
-				tab_u1[k][b] = exp(sign*jUrojona*polar(2.0, 0.0)*polar(M_PI, 0.0)*polar((double)kk, 0.0)*polar((double)bb, 0.0) / (double)tab_P[m]);
+				tab_u1[k][b] = exp(sign*numImaginary*polar(2.0, 0.0)*polar(M_PI, 0.0)*polar((double)kk, 0.0)*polar((double)bb, 0.0) / (double)tab_P[m]);
 			}
 		}
 
@@ -130,7 +130,7 @@ void ft(double sign, std::complex<double> tab_SQ[N][N])
 		{
 			for (j = 0; j <= 1; ++j)
 			{
-				tab_v1[k][j] = exp(-jUrojona * polar(M_PI, 0.0)* polar((double)k, 0.0) * polar((double)j, 0.0));
+				tab_v1[k][j] = exp(-numImaginary * polar(M_PI, 0.0)* polar((double)k, 0.0) * polar((double)j, 0.0));
 			}
 		}
 
@@ -190,12 +190,12 @@ void ft(double sign, std::complex<double> tab_SQ[N][N])
 
 	for (j = 0; j < N; ++j)
 	{
-		czyn1 = tab_index[j];
+		fac1 = tab_index[j];
 
 		for (j_ = 0; j_ < N; ++j_)
 		{
-			czyn2 = tab_index[j_];
-			tab_SQ[j][j_] = tab_SP[czyn1][czyn2];
+			fac2 = tab_index[j_];
+			tab_SQ[j][j_] = tab_SP[fac1][fac2];
 		}
 	}
 
