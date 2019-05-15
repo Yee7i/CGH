@@ -27,11 +27,11 @@ Update the graphical design of the UI and enhance the front-end side of the prog
 
 Thank you for reading this. It really means a lot to me. 
 
-I'm an 18 y/o IT student of a technical high school in Szczecin, Poland.
+I'm an 18 years old IT student of a technical high school in Szczecin, Poland.
 
 I am still a beginner. Maybe I know some stuff, but I still have very, very much to learn. I wish to be a big-brained, hard-working, coffee-drinking programmer someday.
 
-I spent about 4 months making this with my coordinator - Krzysztof Łyszczek, who I owe pretty much the fact that this program has become a thing. He gave the idea and directed the project to turn out what it currently is. We started at the beginning of January and spent several hours a week, sometimes after hours. And for those hours I want to thank him.
+I have spent about 4 months making this with my coordinator - Krzysztof Łyszczek, who I owe pretty much the fact that this program has become a thing. He gave the idea and directed the project to turn out what it currently is. We started at the beginning of January and spent several hours a week, sometimes after hours. And for those hours I want to thank him.
 
 I also want to thank my programming teacher - Filip Majewski - who recommended me as a person suitable for making the project, and I hope I proved capable, just as he thought. To him I owe my first #include &lt;iostream&gt;, int main() and std::cout&lt;&lt;"Hello world!"&lt;&lt;std::endl;
   
@@ -51,6 +51,6 @@ Uhhh, I speak as if it was over. No, it's not. The project isn't perfect, and th
   <img src="sample_images/image.png" alt="&lt;Missing image&gt;" width="50%" /></li>
 </ol>
 
-Each image has a caption at the bottom, signalizing which one of the four it is.
+Each image has a caption at the bottom, distinguishing which one of the four it is.
 
-Additionally, 'image.png' has PSI and SNR added to the caption. Those two vary depending on quantization level. Ideally, PSI goes lower (0 means that the object was reproduced as original) and SNR goes higher (numbers near-infinite mean that the object was reproduced with the highest accuracy).
+Additionally, 'image.png' has PSI and SNR numbers added to the caption. Those two vary depending on quantization level. Ideally, PSI goes lower (0 means that the object was reproduced as original) and SNR goes higher (numbers near-infinite mean that the object was reproduced with the highest accuracy).
