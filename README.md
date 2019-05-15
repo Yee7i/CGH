@@ -24,3 +24,21 @@ The Fast Fourier Transform (FFT) was prepared by my project coordinator - Krzysz
 # To do:
 1. Fully translate the code into English, with file names as well.
 2. Update the graphical design of the UI.
+
+# Sample images:
+<ol type="1">
+<li>An input file (64x64 made of binary numbers, stored in .txt files, chosen in the program):<br>
+  <img src="sample_images/input.png" alt="&lt;Missing image&gt;" /></li><br>
+<li>Object, being a translation of the input file to a .png image:<br>
+  <img src="sample_images/object.png" alt="&lt;Missing image&gt;" width="50%" /></li>
+<li>Spectrum, which is the object, transformed by FFT:<br>
+  <img src="sample_images/spectrum.png" alt="&lt;Missing image&gt;" width="50%" /></li>
+<li>Hologram (spectrum considering amplitude and phase):<br>
+  <img src="sample_images/spectrum_holo.png" alt="&lt;Missing image&gt;" width="50%" /></li>
+<li>Image (hologram, transformed by a reversed FFT):<br>
+  <img src="sample_images/image.png" alt="&lt;Missing image&gt;" width="50%" /></li>
+</ol>
+
+Each image has a caption at the bottom, signalizing which one of the four it is.
+
+Additionally, 'obraz.png' ('image.png') has PSI and SNR added to the caption. Those two vary depending on quantization level. Ideally, PSI goes lower (0 means that the object was reproduced as original) and SNR goes higher (numbers near-infinite mean that the object was reproduced with the highest accuracy).
