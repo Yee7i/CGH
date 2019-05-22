@@ -2,8 +2,7 @@
 #include <math.h>
 #include <complex>
 
-const int N = 64;
-using namespace std;
+#include "maindec.h"
 
 double error_psi(double tab_Ampl[N][N], double tab_Ampl_object[N][N])
 {

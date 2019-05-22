@@ -141,9 +141,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Fourier.cpp" />
+    <ClCompile Include="GUI.cpp" />
     <ClCompile Include="Quantization.cpp" />
     <ClCompile Include="Main_code.cpp" />
     <ClCompile Include="PSI_SNR.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="maindec.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

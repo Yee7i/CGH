@@ -1,10 +1,8 @@
 #include <iostream>
 #include <complex>
 
-using namespace std;
+#include "maindec.h"
 
-const int N = 64;
-const int p = 6;
 const int N1 = N / 2;
 
 void ft(double sign, std::complex<double> tab_SQ[N][N])

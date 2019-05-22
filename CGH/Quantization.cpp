@@ -2,9 +2,7 @@
 #include <stdlib.h>
 #include <string>
 
-using namespace std;
-
-const int N = 64;
+#include "maindec.h"
 
 int quant = 0;
 

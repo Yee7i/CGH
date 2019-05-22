@@ -13,10 +13,18 @@
     <ClCompile Include="Quantization.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="GUI.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source">
       <UniqueIdentifier>{d375ae75-df1b-44ff-acc8-6d124d333f3f}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="maindec.h">
+      <Filter>Source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

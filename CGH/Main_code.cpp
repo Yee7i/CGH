@@ -15,475 +15,31 @@
 #include <iomanip>
 #include <complex>
 
-const int N = 64;
-const int p = 6;
-
-void ft(double sign, std::complex<double> tab_SQ[N][N]);
-void quant_a(double input[N][N], int quant);
-void quant_p(double input[N][N], int quant);
-std::string level_quant(int quant);
-
-double error_psi(double tab_Ampl[N][N], double tab_Ampl_object[N][N]);
-double SNR(double tab_Ampl_object[N][N], double tab_Ampl[N][N], double tab_Phase_object[N][N], double tab_Phase[N][N]);
-
-std::string open()
-{
-	char filename[MAX_PATH];
-
-	OPENFILENAME ofn;
-	ZeroMemory(&filename, sizeof(filename));
-	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = NULL;
-	ofn.lpstrFilter = "Text Files\0*.txt\0Any File\0*.*\0";
-	ofn.lpstrFile = filename;
-	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrTitle = "Choose a file";
-	ofn.Flags = OFN_DONTADDTORECENT | OFN_FILEMUSTEXIST;
-
-	if (GetOpenFileNameA(&ofn))
-	{
-		std::cout << "Path to file: " << filename << "\n";
-	}
-	else
-	{
-		return 0;
-	}
-
-	return filename;
-}
+#include "maindec.h"
 
 using namespace sf;
-using namespace std;
-
-bool click(Sprite check, RenderWindow& window)
-{
-	Vector2f mouse_pos = window.mapPixelToCoords(Mouse::getPosition(window));
-
-	FloatRect bounds = check.getGlobalBounds();
-
-	if (bounds.contains(mouse_pos))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
 
 int main()
 {
 
-	std::string path_input = "";
+	output_options gui_result = gui();
 
-	RenderWindow window(VideoMode(600, 740), "Program functions definition", Style::None);
-	window.setFramerateLimit(60);
-	window.setMouseCursorVisible(true);
-
-	window.setActive(true);
-
-	bool quant_b = false;
-	bool chart_bool = false;
-	bool cutout_b = false;
-	bool color_b = false;
-	bool flag_input = false;
-
-	std::string quant_val = "";
-
-	Font font1;
-	if (!font1.loadFromFile("gothic.ttf"))
+	if (gui_result.path_input == "" || gui_result.flag_exit == true)
 	{
-		cout << "Font loading error" << endl;
+		return 0;
 	}
 
-	Texture ok_button;
-	ok_button.loadFromFile("textures\\ok.png");
-
-	Texture yes;
-	yes.loadFromFile("textures\\yes.png");
-
-	Texture no;
-	no.loadFromFile("textures\\no.png");
-
-	Texture yes_s;
-	yes_s.loadFromFile("textures\\yes_s.png");
-
-	Texture no_s;
-	no_s.loadFromFile("textures\\no_s.png");
-
-	Texture file_texture;
-	file_texture.loadFromFile("textures\\file.png");
-
-	Texture white;
-	white.loadFromFile("textures\\white.png");
-
-	Texture black;
-	black.loadFromFile("textures\\black.png");
-
-	Texture white_s;
-	white_s.loadFromFile("textures\\white_s.png");
-
-	Texture black_s;
-	black_s.loadFromFile("textures\\black_s.png");
-
-	Texture blank;
-	blank.loadFromFile("textures\\blank.png");
-
-	Texture blank_s;
-	blank_s.loadFromFile("textures\\blank_s.png");
-
-	yes.setSmooth(true);
-	yes.setRepeated(false);
-
-	yes_s.setSmooth(true);
-	yes_s.setRepeated(false);
-
-	no.setSmooth(true);
-	no.setRepeated(false);
-
-	no_s.setSmooth(true);
-	no_s.setRepeated(false);
-
-	file_texture.setSmooth(true);
-	file_texture.setRepeated(false);
-
-	ok_button.setSmooth(true);
-	ok_button.setRepeated(false);
-
-	white.setSmooth(true);
-	white.setRepeated(false);
-
-	white_s.setSmooth(true);
-	white_s.setRepeated(false);
-
-	black.setSmooth(true);
-	black.setRepeated(false);
-
-	black_s.setSmooth(true);
-	black_s.setRepeated(false);
-
-	blank.setSmooth(true);
-	blank.setRepeated(false);
-
-	blank_s.setSmooth(true);
-	blank_s.setRepeated(false);
-
-	Sprite st_quant;
-	Sprite sn_quant;
-
-	st_quant.setPosition(200, 200);
-	sn_quant.setPosition(320, 200);
-
-	Sprite st_chart;
-	Sprite sn_chart;
-
-	st_chart.setPosition(200, 330);
-	sn_chart.setPosition(320, 330);
-
-	Sprite st_cutout;
-	Sprite sn_cutout;
-
-	st_cutout.setPosition(200, 460);
-	sn_cutout.setPosition(320, 460);
-
-	Sprite s_ok;
-	s_ok.setPosition(250, 650);
-
-	Sprite s_file;
-	s_file.setPosition(260, 20);
-	
-	Sprite s_black;
-	s_black.setPosition(200, 580);
-	
-	Sprite s_white;
-	s_white.setPosition(320, 580);
-
-	Sprite s_blank;
-	s_blank.setPosition(440, 200);
-
-	Text text0;
-	text0.setFont(font1);
-	text0.setFillColor(Color::White);
-	text0.setPosition(210, 150);
-
-	Text text1;
-	text1.setFont(font1);
-	text1.setFillColor(Color::White);
-	text1.setString("Quantization");
-	text1.setPosition(210, 140);
-
-	Text text2;
-	text2.setFont(font1);
-	text2.setFillColor(Color::White);
-	text2.setString("Chart");
-	text2.setPosition(265, 270);
-
-	Text text3;
-	text3.setFont(font1);
-	text3.setFillColor(Color::White);
-	text3.setString("Spectrum fragment erasing");
-	text3.setPosition(100, 400);
-
-	Text text4;
-	text4.setFont(font1);
-	text4.setFillColor(Color::White);
-	text4.setString("Texture color");
-	text4.setPosition(220, 530);
-
-	Text quant_val_str;
-	quant_val_str.setFont(font1);
-	quant_val_str.setFillColor(Color::White);
-	quant_val_str.setPosition(450, 214);
-	quant_val_str.setCharacterSize(18);
-
-	while (window.isOpen())
+	if (gui_result.color_b == true)
 	{
-		window.clear(Color::Black);
-
-		text0.setString(path_input);
-		text0.setCharacterSize(18);
-		text0.setPosition(window.getSize().x / 2 - text0.getLocalBounds().width / 2, 90);
-
-		quant_val_str.setString(quant_val);
-
-		s_ok.setTexture(ok_button);
-		s_file.setTexture(file_texture);
-
-		if (quant_b == false)
-		{
-			st_quant.setTexture(yes);
-			sn_quant.setTexture(no_s);
-		}
-		if (quant_b == true)
-		{
-			st_quant.setTexture(yes_s);
-			sn_quant.setTexture(no);
-		}
-
-		if (chart_bool == false)
-		{
-			st_chart.setTexture(yes);
-			sn_chart.setTexture(no_s);
-		}
-		if (chart_bool == true)
-		{
-			st_chart.setTexture(yes_s);
-			sn_chart.setTexture(no);
-		}
-
-		if (cutout_b == false)
-		{
-			st_cutout.setTexture(yes);
-			sn_cutout.setTexture(no_s);
-		}
-		if (cutout_b == true)
-		{
-			st_cutout.setTexture(yes_s);
-			sn_cutout.setTexture(no);
-		}
-
-		if (color_b == false)
-		{
-			s_black.setTexture(black_s);
-			s_white.setTexture(white);
-		}
-		if (color_b == true)
-		{
-			s_black.setTexture(black);
-			s_white.setTexture(white_s);
-		}
-
-		if (flag_input == false)
-		{
-			s_blank.setTexture(blank);
-		}
-		if (flag_input == true)
-		{
-			s_blank.setTexture(blank_s);
-		}
-
-		window.draw(text1);
-		window.draw(text2);
-		window.draw(text3);
-		window.draw(text4);
-
-		window.draw(st_quant);
-		window.draw(sn_quant);
-
-		window.draw(st_chart);
-		window.draw(sn_chart);
-
-		window.draw(st_cutout);
-		window.draw(sn_cutout);
-
-		window.draw(s_black);
-		window.draw(s_white);
-
-		window.draw(s_ok);
-		window.draw(s_file);
-
-		window.draw(text0);
-
-		if (quant_b == true)
-		{
-			window.draw(s_blank);
-			window.draw(quant_val_str);
-		}
-
-		Event ev;
-
-		while (window.pollEvent(ev))
-		{
-			switch (ev.type)
-			{
-				case Event::MouseButtonPressed:
-				{
-
-					if (click(st_quant, window) == true) 
-					{
-						quant_b = true;
-					}
-					if (click(sn_quant, window) == true)
-					{
-						quant_b = false;
-					}
-
-					if (click(st_cutout, window) == true)
-					{
-						cutout_b = true;
-					}
-					if (click(sn_cutout, window) == true)
-					{
-						cutout_b = false;
-					}
-
-					if (click(st_chart, window) == true)
-					{
-						chart_bool = true;
-					}
-					if (click(sn_chart, window) == true)
-					{
-						chart_bool = false;
-					}
-
-					if (click(s_white, window) == true)
-					{
-						color_b = true;
-					}
-					if (click(s_black, window) == true)
-					{
-						color_b = false;
-					}
-
-					if (click(s_ok, window) == true)
-					{
-						if (path_input != "")
-						{
-							window.close();
-						}
-					}
-
-					if (click(s_file, window) == true)
-					{
-						path_input = open();
-					}
-
-					if (click(s_blank, window) == false)
-					{
-
-						flag_input = false;
-
-					}
-
-					if (click(s_blank, window) == true)
-					{
-
-						flag_input = true;
-				
-					}
-				}
-
-				case Event::KeyPressed:
-				{
-
-					if (flag_input == true)
-					{
-
-						if (quant_val.size() < 8)
-						{
-
-							if (Keyboard::isKeyPressed(Keyboard::Num1))
-							{
-								quant_val.append("1");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num2))
-							{
-								quant_val.append("2");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num3))
-							{
-								quant_val.append("3");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num4))
-							{
-								quant_val.append("4");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num5))
-							{
-								quant_val.append("5");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num6))
-							{
-								quant_val.append("6");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num7))
-							{
-								quant_val.append("7");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num8))
-							{
-								quant_val.append("8");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num9))
-							{
-								quant_val.append("9");
-							}
-							if (Keyboard::isKeyPressed(Keyboard::Num0))
-							{
-								quant_val.append("0");
-							}
-						}
-
-						if (Keyboard::isKeyPressed(Keyboard::BackSpace))
-						{
-							if (quant_val.size() > 0)
-							{
-								quant_val.pop_back();
-							}
-						}
-					}
-				}
-			}
-		}
-
-		window.display();
-	}
-	
-	bool chart_b = chart_bool;
-	bool quantization_b = quant_b;
-
-	if (color_b == true)
-	{
-		color_b = false;
+		gui_result.color_b = false;
 	}
 	else
 	{
-		color_b = true;
+		gui_result.color_b = true;
 	}
 
-	bool mode_b = color_b;
-	bool cutout_alt_b = cutout_b;
+	bool mode_b = gui_result.color_b;
+	bool cutout_alt_b = gui_result.cutout_b;
 
 	const double M_PI = 3.14159265358979323846;
 
@@ -516,7 +72,7 @@ int main()
 		}
 	}
 
-	float pi = 3.14159265358979323846;
+	float pi = M_PI;
 
 	int space = 0;
 	int pspace = 0;
@@ -604,7 +160,7 @@ int main()
 
 	std::string name_target_input = name_target_fold + "\\input\\input.txt";
 
-	CopyFile(path_input.c_str(), name_target_input.c_str(), false);
+	CopyFile(gui_result.path_input.c_str(), name_target_input.c_str(), false);
 
 	cout << "Done." << endl;
 
@@ -660,10 +216,10 @@ int main()
 	int quant_level = 0;
 	stringstream quant_sstream;
 
-	quant_sstream << quant_val;
+	quant_sstream << gui_result.quant_val;
 	quant_sstream >> quant_level;
 
-	if (quantization_b == true)
+	if (gui_result.quant_b == true)
 	{
 		quant_a(tab_Ampl, quant_level);
 		quant_p(tab_Phase, quant_level);
@@ -781,7 +337,7 @@ int main()
 			tab_Phase[i][j] = arg(tab_SQ[i][j]);
 
 			if (tab_Phase[i][j] < 0) {
-				tab_Phase[i][j] += pi * 2;
+				tab_Phase[i][j] += M_PI * 2;
 			}
 		}
 	}
@@ -980,12 +536,12 @@ int main()
 					amplitude = tab_objectA[j][i];
 				}
 
-				if (phase > pi)
+				if (phase > M_PI)
 				{
-					phase -= pi * 2;
+					phase -= M_PI * 2;
 				}
 
-				float phase_p = (chart.getSize().x * 2 / 3) / (pi * 2) * phase;
+				float phase_p = (chart.getSize().x * 2 / 3) / (M_PI * 2) * phase;
 
 				if (f == 0)
 				{
@@ -1020,13 +576,13 @@ int main()
 				{
 					texture.setActive(true);
 
-					if (chart_b == true) {
+					if (gui_result.chart_b == true) {
 						texture.draw(chart);
 					}
 
 					texture.draw(disp_rectangle);
 
-					if (chart_b == true) {
+					if (gui_result.chart_b == true) {
 						texture.draw(dot);
 					}
 				}
@@ -1034,13 +590,13 @@ int main()
 				{
 					texture2.setActive(true);
 
-					if (chart_b == true) {
+					if (gui_result.chart_b == true) {
 						texture2.draw(chart);
 					}
 
 					texture2.draw(disp_rectangle);
 
-					if (chart_b == true) {
+					if (gui_result.chart_b == true) {
 						texture2.draw(dot);
 					}
 				}
@@ -1048,14 +604,14 @@ int main()
 				{
 					texture3.setActive(true);
 
-					if (chart_b == true)
+					if (gui_result.chart_b == true)
 					{
 						texture3.draw(chart);
 					}
 
 					texture3.draw(disp_rectangle);
 
-					if (chart_b == true)
+					if (gui_result.chart_b == true)
 					{
 						texture3.draw(dot);
 					}
@@ -1064,13 +620,13 @@ int main()
 				{
 					texture4.setActive(true);
 
-					if (chart_b == true) {
+					if (gui_result.chart_b == true) {
 						texture4.draw(chart);
 					}
 
 					texture4.draw(disp_rectangle);
 
-					if (chart_b == true) {
+					if (gui_result.chart_b == true) {
 						texture4.draw(dot);
 					}
 				}
