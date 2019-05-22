@@ -104,7 +104,7 @@ output_options gui()
 
 	window.setActive(true);
 
-	std::string quant_val = "";
+	std::string quant_val = "Value";
 
 	Font font1;
 	if (!font1.loadFromFile("gothic.ttf"))
@@ -232,41 +232,50 @@ output_options gui()
 	Text text0;
 	text0.setFont(font1);
 	text0.setFillColor(Color::White);
-	text0.setPosition(210, 150);
 
 	Text text1;
 	text1.setFont(font1);
 	text1.setFillColor(Color::White);
 	text1.setString("Quantization");
-	text1.setPosition(window_width / 4 - text1.getLocalBounds().width / 2, 5 * (window_height / 8));
 	text1.setCharacterSize(30 * scale_height);
+	text1.setPosition(window_width / 4 - text1.getLocalBounds().width / 2, 5 * (window_height / 8));
+	
 
 	Text text2;
 	text2.setFont(font1);
 	text2.setFillColor(Color::White);
 	text2.setString("Chart");
-	text2.setPosition(window_width / 4 - text2.getLocalBounds().width / 2, 3 * (window_height / 8));
 	text2.setCharacterSize(30 * scale_height);
+	text2.setPosition(window_width / 4 - text2.getLocalBounds().width / 2, 3 * (window_height / 8));
+	
 
 	Text text3;
 	text3.setFont(font1);
 	text3.setFillColor(Color::White);
 	text3.setString("Spectrum fragment erasing");
-	text3.setPosition((window_width / 2 + window_width / 4) - text3.getLocalBounds().width / 2, 3 * (window_height / 8));
 	text3.setCharacterSize(30 * scale_height);
+	text3.setPosition((window_width / 2 + window_width / 4) - text3.getLocalBounds().width / 2, 3 * (window_height / 8));
+
 
 	Text text4;
 	text4.setFont(font1);
 	text4.setFillColor(Color::White);
 	text4.setString("Texture color");
-	text4.setPosition((window_width / 2 + window_width / 4) - text4.getLocalBounds().width / 2, 5 * (window_height / 8));
 	text4.setCharacterSize(30 * scale_height);
+	text4.setPosition((window_width / 2 + window_width / 4) - text4.getLocalBounds().width / 2, 5 * (window_height / 8));
 
 	Text quant_val_str;
 	quant_val_str.setFont(font1);
 	quant_val_str.setFillColor(Color::White);
-	quant_val_str.setPosition(450, 214);
-	quant_val_str.setCharacterSize(18);
+	quant_val_str.setPosition(((window_width / 4) - button_size_x / 2) + 10, 7 * (window_height / 8) + 12);
+	quant_val_str.setCharacterSize(18 * scale_height);
+
+	Text caption;
+	caption.setFont(font1);
+	caption.setCharacterSize(10 * scale_height);
+	caption.setString("Created by Adrian Tomicki. Github.com/Yee7i/CGH - do not redistribute without my permission");
+	caption.setFillColor(Color::White);
+	caption.setPosition(3, window_height - caption.getLocalBounds().height - 3);
 
 	while (window.isOpen())
 	{
@@ -369,6 +378,11 @@ output_options gui()
 		if (flag_in == true)
 		{
 			s_blank.setTexture(blank_s);
+
+			if (quant_val == "Value")
+			{
+				quant_val = "";
+			}
 		}
 
 		window.draw(title);
@@ -395,6 +409,7 @@ output_options gui()
 		window.draw(text0);
 
 		window.draw(exit);
+		window.draw(caption);
 
 		if (quant_b == true)
 		{
