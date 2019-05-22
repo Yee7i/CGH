@@ -21,7 +21,10 @@ The Fast Fourier Transform (FFT) was prepared by my project coordinator - Krzysz
 2. Krzysztof Łyszczek - project coordinator and manager, provided Fast Fourier Transform and theoretical knowledge of physics, optics and more.
 
 # To do:
-Update the graphical design of the UI and enhance the front-end side of the program. It looks poorly-made.
+1. I plan on making the whole program in GUI, so I'll probably rewrite half of the code, so it fits.
+2. Cutting out a fragment of the spectrum is really unintuitive, since it happens in the console. I'll work on implementing the feature inside the GUI.
+3. The GUI has been updated, but I'm still waiting for the textures. They should be updated soon.
+
 
 # From the author:
 
@@ -36,6 +39,10 @@ I have spent about 4 months making this with my coordinator - Krzysztof Łyszcze
 I also want to thank my programming teacher - Filip Majewski - who recommended me as a person suitable for making the project, and I hope I proved capable, just as he thought. To him I owe my first #include &lt;iostream&gt;, int main() and std::cout&lt;&lt;"Hello world!"&lt;&lt;std::endl;
   
 Uhhh, I speak as if it was over. No, it's not. The project isn't perfect, and that's a fact. There's much work to do, and more to come.
+
+# Redistribution and permissions:
+
+If you'd like to redistribute my code or a part of it, please ask me for permission first. I don't mind if you use it personally. It'd make me happy if you actually studied from it and learned something valuable.
 
 # Sample images:
 <ol type="1">
