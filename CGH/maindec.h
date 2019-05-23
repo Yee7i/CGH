@@ -15,6 +15,8 @@ std::string open();
 double error_psi(double tab_Ampl[N][N], double tab_Ampl_object[N][N]);
 double SNR(double tab_Ampl_object[N][N], double tab_Ampl[N][N], double tab_Phase_object[N][N], double tab_Phase[N][N]);
 
+bool returnfilled(int i, int j);
+
 struct output_options
 {
 	std::string path_input;

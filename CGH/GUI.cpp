@@ -12,6 +12,8 @@
 
 using namespace sf;
 
+bool filled[64][64] = { false };
+
 std::string open()
 {
 	char filename[MAX_PATH];
@@ -71,8 +73,60 @@ bool click_rect(RectangleShape check, RenderWindow &window)
 	}
 }
 
+int checkgrid_x(int pos_x, int base_offset_x, int gridsize_x)
+{
+	for (int i = 0; i < 64; i++)
+	{
+		if (base_offset_x + (i + 1) * gridsize_x + i/2 + i*0.1 > pos_x)
+		{
+			if (base_offset_x + i * gridsize_x + i/2 + i*0.1 <= pos_x)
+			{
+				return i;
+			}
+		}
+	}
+
+	return -1;
+}
+
+int checkgrid_y(int pos_y, int base_offset_y, int gridsize_y)
+{
+	for (int i = 0; i < 64; i++)
+	{
+		if (base_offset_y + (i + 1) * gridsize_y + i/2 + i*0.1 > pos_y)
+		{
+			if (base_offset_y + i * gridsize_y + i/2 + i*0.1 <= pos_y)
+			{
+				return i;
+			}
+		}
+	}
+
+	return -1;
+}
+
+void swap_values(int x_begin, int y_begin, int x_end, int y_end)
+{
+	for (int i = x_begin; i <= x_end; i++)
+	{
+		for (int j = y_begin; j <= y_end; j++)
+		{
+			if (filled[j][i] == true)
+			{
+				filled[j][i] = false;
+			}
+			else
+			{
+				filled[j][i] = true;
+			}
+		}
+	}
+}
+
 output_options gui()
 {
+
+	int phase = 1;
 
 	std::string path_input = "";
 	bool quant_b = false;
@@ -228,6 +282,9 @@ output_options gui()
 	Text title;
 	title.setFont(font1);
 	title.setFillColor(Color::White);
+	title.setCharacterSize(36 * scale_height);
+	title.setString("Welcome to CGH!");
+	title.setPosition(window.getSize().x / 2 - title.getLocalBounds().width / 2, 10);
 
 	Text text0;
 	text0.setFont(font1);
@@ -273,285 +330,422 @@ output_options gui()
 	Text caption;
 	caption.setFont(font1);
 	caption.setCharacterSize(10 * scale_height);
-	caption.setString("Created by Adrian Tomicki. Github.com/Yee7i/CGH - do not redistribute without my permission");
+	caption.setString("Created by Adrian Tomicki. Github.com/Yee7i/CGH - do not redistribute without my permission.");
 	caption.setFillColor(Color::White);
 	caption.setPosition(3, window_height - caption.getLocalBounds().height - 3);
+
+	RectangleShape grid(Vector2f(window_height / 80, window_height / 80));
+	grid.setOutlineColor(Color::White);
+	grid.setOutlineThickness(1);
+
+	bool first_click = true;
+	int base_offset_x = 100;
+	int base_offset_y = 100;
+
+	int mouse_posx;
+	int mouse_posy;
+
+	int mouse_grid_x = -1;
+	int mouse_grid_y = -1;
+
+	int mouse_grid_x_2 = -1;
+	int mouse_grid_y_2 = -1;
 
 	while (window.isOpen())
 	{
 		window.clear(Color::Black);
 
-		title.setCharacterSize((int)(36 * scale_height));
-		cout << title.getCharacterSize() << endl;
-		title.setPosition(window.getSize().x / 2 - title.getLocalBounds().width / 2, 10);
-		title.setString("Welcome to CGH!");
-
-		if (path_input == "") 
+		if (phase == 1)
 		{
-			text0.setString("File path - not selected yet." + path_input);
-		}
-		else
-		{
-			int last_slash = 0;
-			int last_slash2 = 0;
-			int size = path_input.size();
 
-			if (size >= 75 && shorten_once == false)
+			if (path_input == "")
 			{
-				for (int i = 0; i < 4; i++)
+				text0.setString("File path - not selected yet." + path_input);
+			}
+			else
+			{
+				int last_slash = 0;
+				int last_slash2 = 0;
+				int size = path_input.size();
+
+				if (size >= 75 && shorten_once == false)
 				{
-					last_slash = path_input.find("\\", last_slash + 1);
+					for (int i = 0; i < 4; i++)
+					{
+						last_slash = path_input.find("\\", last_slash + 1);
+					}
+
+					for (int i = 0; i < 7; i++)
+					{
+						last_slash2 = path_input.find("\\", last_slash2 + 1);
+					}
+
+					path_input.erase(last_slash + 1, last_slash2 - last_slash - 1);
+					path_input.insert(last_slash + 1, "[...]");
+
+					shorten_once = true;
 				}
 
-				for (int i = 0; i < 7; i++)
-				{
-					last_slash2 = path_input.find("\\", last_slash2 + 1);
-				}
-
-				path_input.erase(last_slash + 1, last_slash2 - last_slash - 1);
-				path_input.insert(last_slash + 1, "[...]");
-
-				shorten_once = true;
+				text0.setString("File path - " + path_input);
 			}
 
-			cout << "4th slash = " << last_slash << ". 7th slash = " << last_slash2 << endl;
+			text0.setCharacterSize(24 * scale_height);
+			text0.setPosition(window.getSize().x / 2 - text0.getLocalBounds().width / 2, 2 * (window_height / 8));
 
-			text0.setString("File path - " + path_input);
-		}
+			quant_val_str.setString(quant_val);
 
-		text0.setCharacterSize(24 * scale_height);
-		text0.setPosition(window.getSize().x / 2 - text0.getLocalBounds().width / 2, 2 * (window_height / 8));
+			s_ok.setTexture(ok_button);
+			s_file.setTexture(file_texture);
 
-		quant_val_str.setString(quant_val);
-
-		s_ok.setTexture(ok_button);
-		s_file.setTexture(file_texture);
-
-		if (quant_b == false)
-		{
-			st_quant.setTexture(yes);
-			sn_quant.setTexture(no_s);
-		}
-		if (quant_b == true)
-		{
-			st_quant.setTexture(yes_s);
-			sn_quant.setTexture(no);
-		}
-
-		if (chart_b == false)
-		{
-			st_chart.setTexture(yes);
-			sn_chart.setTexture(no_s);
-		}
-		if (chart_b == true)
-		{
-			st_chart.setTexture(yes_s);
-			sn_chart.setTexture(no);
-		}
-
-		if (cutout_b == false)
-		{
-			st_cutout.setTexture(yes);
-			sn_cutout.setTexture(no_s);
-		}
-		if (cutout_b == true)
-		{
-			st_cutout.setTexture(yes_s);
-			sn_cutout.setTexture(no);
-		}
-
-		if (color_b == false)
-		{
-			s_black.setTexture(black_s);
-			s_white.setTexture(white);
-		}
-		if (color_b == true)
-		{
-			s_black.setTexture(black);
-			s_white.setTexture(white_s);
-		}
-
-		if (flag_in == false)
-		{
-			s_blank.setTexture(blank);
-		}
-		if (flag_in == true)
-		{
-			s_blank.setTexture(blank_s);
-
-			if (quant_val == "Value")
+			if (quant_b == false)
 			{
-				quant_val = "";
+				st_quant.setTexture(yes);
+				sn_quant.setTexture(no_s);
+			}
+			if (quant_b == true)
+			{
+				st_quant.setTexture(yes_s);
+				sn_quant.setTexture(no);
+			}
+
+			if (chart_b == false)
+			{
+				st_chart.setTexture(yes);
+				sn_chart.setTexture(no_s);
+			}
+			if (chart_b == true)
+			{
+				st_chart.setTexture(yes_s);
+				sn_chart.setTexture(no);
+			}
+
+			if (cutout_b == false)
+			{
+				st_cutout.setTexture(yes);
+				sn_cutout.setTexture(no_s);
+			}
+			if (cutout_b == true)
+			{
+				st_cutout.setTexture(yes_s);
+				sn_cutout.setTexture(no);
+			}
+
+			if (color_b == false)
+			{
+				s_black.setTexture(black_s);
+				s_white.setTexture(white);
+			}
+			if (color_b == true)
+			{
+				s_black.setTexture(black);
+				s_white.setTexture(white_s);
+			}
+
+			if (flag_in == false)
+			{
+				s_blank.setTexture(blank);
+			}
+			if (flag_in == true)
+			{
+				s_blank.setTexture(blank_s);
+
+				if (quant_val == "Value")
+				{
+					quant_val = "";
+				}
+			}
+
+			window.draw(title);
+			window.draw(text1);
+			window.draw(text2);
+			window.draw(text3);
+			window.draw(text4);
+
+			window.draw(st_quant);
+			window.draw(sn_quant);
+
+			window.draw(st_chart);
+			window.draw(sn_chart);
+
+			window.draw(st_cutout);
+			window.draw(sn_cutout);
+
+			window.draw(s_black);
+			window.draw(s_white);
+
+			window.draw(s_ok);
+			window.draw(s_file);
+
+			window.draw(text0);
+
+			window.draw(exit);
+			window.draw(caption);
+
+			if (quant_b == true)
+			{
+				window.draw(s_blank);
+				window.draw(quant_val_str);
+			}
+
+			Event ev;
+
+			while (window.pollEvent(ev))
+			{
+				switch (ev.type)
+				{
+				case Event::MouseButtonPressed:
+				{
+
+					if (click(st_quant, window) == true)
+					{
+						quant_b = true;
+					}
+					if (click(sn_quant, window) == true)
+					{
+						quant_b = false;
+					}
+
+					if (click(st_cutout, window) == true)
+					{
+						cutout_b = true;
+					}
+					if (click(sn_cutout, window) == true)
+					{
+						cutout_b = false;
+					}
+
+					if (click(st_chart, window) == true)
+					{
+						chart_b = true;
+					}
+					if (click(sn_chart, window) == true)
+					{
+						chart_b = false;
+					}
+
+					if (click(s_white, window) == true)
+					{
+						color_b = true;
+					}
+					if (click(s_black, window) == true)
+					{
+						color_b = false;
+					}
+
+					if (click(s_ok, window) == true)
+					{
+						if (cutout_b == true && path_input != "")
+						{
+							phase = 2;
+						}
+
+						if (cutout_b == false && path_input != "")
+						{
+							window.close();
+						}
+					}
+
+					if (click(s_file, window) == true)
+					{
+						path_input = open();
+					}
+
+					if (click(s_blank, window) == false)
+					{
+						flag_in = false;
+					}
+
+					if (click(s_blank, window) == true)
+					{
+						flag_in = true;
+					}
+
+					if (click_rect(exit, window) == true)
+					{
+						window.close();
+						flag_exit = true;
+					}
+				}
+
+				case Event::KeyPressed:
+				{
+
+					if (flag_in == true)
+					{
+
+						if (quant_val.size() < 8)
+						{
+
+							if (Keyboard::isKeyPressed(Keyboard::Num1))
+							{
+								quant_val.append("1");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num2))
+							{
+								quant_val.append("2");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num3))
+							{
+								quant_val.append("3");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num4))
+							{
+								quant_val.append("4");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num5))
+							{
+								quant_val.append("5");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num6))
+							{
+								quant_val.append("6");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num7))
+							{
+								quant_val.append("7");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num8))
+							{
+								quant_val.append("8");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num9))
+							{
+								quant_val.append("9");
+							}
+							if (Keyboard::isKeyPressed(Keyboard::Num0))
+							{
+								quant_val.append("0");
+							}
+						}
+
+						if (Keyboard::isKeyPressed(Keyboard::BackSpace))
+						{
+							if (quant_val.size() > 0)
+							{
+								quant_val.pop_back();
+							}
+						}
+					}
+				}
+				}
 			}
 		}
 
-		window.draw(title);
-		window.draw(text1);
-		window.draw(text2);
-		window.draw(text3);
-		window.draw(text4);
-
-		window.draw(st_quant);
-		window.draw(sn_quant);
-
-		window.draw(st_chart);
-		window.draw(sn_chart);
-
-		window.draw(st_cutout);
-		window.draw(sn_cutout);
-
-		window.draw(s_black);
-		window.draw(s_white);
-
-		window.draw(s_ok);
-		window.draw(s_file);
-
-		window.draw(text0);
-
-		window.draw(exit);
-		window.draw(caption);
-
-		if (quant_b == true)
+		if (phase == 2)
 		{
-			window.draw(s_blank);
-			window.draw(quant_val_str);
-		}
-
-		Event ev;
-
-		while (window.pollEvent(ev))
-		{
-			switch (ev.type)
-			{
-			case Event::MouseButtonPressed:
-			{
-
-				if (click(st_quant, window) == true)
-				{
-					quant_b = true;
-				}
-				if (click(sn_quant, window) == true)
-				{
-					quant_b = false;
-				}
-
-				if (click(st_cutout, window) == true)
-				{
-					cutout_b = true;
-				}
-				if (click(sn_cutout, window) == true)
-				{
-					cutout_b = false;
-				}
-
-				if (click(st_chart, window) == true)
-				{
-					chart_b = true;
-				}
-				if (click(sn_chart, window) == true)
-				{
-					chart_b = false;
-				}
-
-				if (click(s_white, window) == true)
-				{
-					color_b = true;
-				}
-				if (click(s_black, window) == true)
-				{
-					color_b = false;
-				}
+			title.setString("Select areas to cut out");
+			title.setPosition(window.getSize().x / 2 - title.getLocalBounds().width / 2, 10);
 			
-				if (click(s_ok, window) == true)
+			for (int cols = 0; cols < 64; cols++)
+			{
+				for (int rows = 0; rows < 64; rows++)
 				{
-					if (path_input != "")
+					grid.setPosition(base_offset_x + rows * grid.getSize().x, base_offset_y + cols * grid.getSize().y);
+
+					if (filled[cols][rows] == true) 
+					{
+						grid.setFillColor(Color::Red);
+					}
+					else
+					{
+						grid.setFillColor(Color::Black);
+					}
+
+					window.draw(grid);
+				}
+			}
+
+			text4.setString("Use your cursor to select areas you\nwant to cut out from the spectrum.\n\nThe generated spectrum will have\nthese areas cut out.\n\nAfter you've finished, press continue.");
+			text4.setPosition(window_width - 50 - text4.getLocalBounds().width, window_height / 3);
+
+			window.draw(title);
+			window.draw(s_ok);
+			window.draw(text4);
+			window.draw(exit);
+
+			Event ev;
+
+			while (window.pollEvent(ev))
+			{
+				switch (ev.type)
+				{
+				case Event::MouseButtonPressed:
+				{
+					if (click_rect(exit, window) == true)
+					{
+						window.close();
+						flag_exit = true;
+					}
+
+					if (click(s_ok, window) == true)
 					{
 						window.close();
 					}
-				}
-			
-				if (click(s_file, window) == true)
-				{
-					path_input = open();
-				}
 
-				if (click(s_blank, window) == false)
-				{
-					flag_in = false;
-				}
-
-				if (click(s_blank, window) == true)
-				{
-					flag_in = true;
-				}
-
-				if (click_rect(exit, window) == true)
-				{
-					window.close();
-					flag_exit = true;
-				}
-			}
-
-			case Event::KeyPressed:
-			{
-
-				if (flag_in == true)
-				{
-
-					if (quant_val.size() < 8)
+					Vector2f mouse_pos = window.mapPixelToCoords(Mouse::getPosition());
+					mouse_posx = mouse_pos.x;
+					mouse_posy = mouse_pos.y;
+					
+					if (first_click == true)
 					{
+						mouse_grid_x = checkgrid_x(mouse_posx, base_offset_x, grid.getSize().x);
+						mouse_grid_y = checkgrid_y(mouse_posy, base_offset_y, grid.getSize().y);
 
-						if (Keyboard::isKeyPressed(Keyboard::Num1))
+						if (mouse_grid_x == -1 || mouse_grid_y == -1)
 						{
-							quant_val.append("1");
+							mouse_grid_x = -1;
+							mouse_grid_y = -1;
 						}
-						if (Keyboard::isKeyPressed(Keyboard::Num2))
+
+						cout << mouse_grid_x << " " << mouse_grid_y << endl;
+
+						if (mouse_grid_x != -1 && mouse_grid_y != -1)
 						{
-							quant_val.append("2");
+							first_click = false;
 						}
-						if (Keyboard::isKeyPressed(Keyboard::Num3))
+						else
 						{
-							quant_val.append("3");
+							first_click = true;
 						}
-						if (Keyboard::isKeyPressed(Keyboard::Num4))
-						{
-							quant_val.append("4");
-						}
-						if (Keyboard::isKeyPressed(Keyboard::Num5))
-						{
-							quant_val.append("5");
-						}
-						if (Keyboard::isKeyPressed(Keyboard::Num6))
-						{
-							quant_val.append("6");
-						}
-						if (Keyboard::isKeyPressed(Keyboard::Num7))
-						{
-							quant_val.append("7");
-						}
-						if (Keyboard::isKeyPressed(Keyboard::Num8))
-						{
-							quant_val.append("8");
-						}
-						if (Keyboard::isKeyPressed(Keyboard::Num9))
-						{
-							quant_val.append("9");
-						}
-						if (Keyboard::isKeyPressed(Keyboard::Num0))
-						{
-							quant_val.append("0");
-						}
+
 					}
-
-					if (Keyboard::isKeyPressed(Keyboard::BackSpace))
+					else
 					{
-						if (quant_val.size() > 0)
+						mouse_grid_x_2 = checkgrid_x(mouse_posx, base_offset_x, grid.getSize().x);
+						mouse_grid_y_2 = checkgrid_y(mouse_posy, base_offset_y, grid.getSize().y);
+
+						if (mouse_grid_x_2 == -1 || mouse_grid_y == -1)
 						{
-							quant_val.pop_back();
+							mouse_grid_x_2 = -1;
+							mouse_grid_y_2 = -1;
+						}
+
+						cout << mouse_grid_x_2 << " " << mouse_grid_y_2 << endl;
+
+						if (mouse_grid_x_2 != -1 && mouse_grid_y_2 != -1)
+						{
+							first_click = true;
+
+							if (mouse_grid_x_2 < mouse_grid_x)
+							{
+								swap(mouse_grid_x_2, mouse_grid_x);
+							}
+
+							if (mouse_grid_y_2 < mouse_grid_y)
+							{
+								swap(mouse_grid_y_2, mouse_grid_y);
+							}
+
+							swap_values(mouse_grid_x, mouse_grid_y, mouse_grid_x_2, mouse_grid_y_2);
+
+						}
+						else
+						{
+							first_click = false;
 						}
 					}
 				}
-			}
+				}
 			}
 		}
 
@@ -569,4 +763,9 @@ output_options gui()
 		flag_exit
 	};
 
+}
+
+bool returnfilled(int i, int j)
+{
+	return filled[i][j];
 }

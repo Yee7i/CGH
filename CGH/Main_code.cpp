@@ -227,29 +227,13 @@ int main()
 
 	if (cutout_alt_b == true)
 	{
-		int il_pol = 0;
-		int index1, index2, index3, index4;
-
-		cout << "How many fields to cut out?: ";
-		cin >> il_pol;
-
-		for (int i = 0; i < il_pol; i++)
+		for (int i = 0; i < 64; i++)
 		{
-			cout << "Input the indexes of field " << i + 1 << ", please. "<<endl;
-			cout << "Beginning - x axis: ";
-			cin >> index2;
-			cout << "Beginning - y axis: ";
-			cin >> index1;
-			cout << "End - x axis: ";
-			cin >> index4;
-			cout << "End - y axis: ";
-			cin	>> index3;
-
-			for (int i = index1; i <= index3; i++)
+			for (int j = 0; j < 64; j++)
 			{
-				for (int j = index2; j <= index4; j++)
-				{
-					tab_Ampl[i][j] = 0.0;
+				if (returnfilled(i,j) == true) 
+				{ 
+					tab_Ampl[i][j] = 0.0; 
 				}
 			}
 		}
@@ -263,7 +247,6 @@ int main()
 			tab_Phase_old[i][j] = tab_Phase[i][j];
 		}
 	}
-
 
 	for (i = 0; i < N; i++)
 	{
