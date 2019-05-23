@@ -22,9 +22,13 @@ The Fast Fourier Transform (FFT) was prepared by my project coordinator - Krzysz
 
 # To do:
 1. I plan on making the whole program in GUI, so I'll probably rewrite half of the code, so it fits.
-2. Cutting out a fragment of the spectrum is really unintuitive, since it happens in the console. I'll work on implementing the feature inside the GUI.
-3. The GUI has been updated, but I'm still waiting for the textures. They should be updated soon.
+2. The GUI has been updated, but I'm still waiting for the textures. They should be updated soon.
 
+# Done:
+1. Redesigned the UI, so it's more convenient for the user and detects resolution.
+2. Created a window to cut out a fragment of the spectrum in GUI, instead of console.
+3. Rewritten the code in English instead of mixed Polish/English and fully translated both the code and the UI.
+4. Redesigned source files to be more intuitive. You can now tell what is where, more or less.
 
 # From the author:
 
